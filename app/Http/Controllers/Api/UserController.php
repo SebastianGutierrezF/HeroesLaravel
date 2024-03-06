@@ -104,4 +104,17 @@ class UserController extends Controller
             'mensaje' => 'Cierre de Sesión'
         ]);
     }
+
+    public function show(Request $request) {
+        $valores = $request->input();
+        $users = [];
+        if (isset($valores['first'])) {
+            $users = User::select('id', 'name', 'email')
+                ->offset($valores['first'])
+                ->limit($valores['last'])
+                ->get();
+            return response()->json(['estatus' => true, 'data' => $users]);
+        }
+        return response()->json(['estatus' => false, 'data' => $users]);
+    }
 }

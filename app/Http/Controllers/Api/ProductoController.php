@@ -45,8 +45,9 @@ class ProductoController extends Controller
                 ->toArray();
 
             $total = Producto::where($condicion)->count();
+            return response()->json(['data' => $productos, 'count' => $total, 'parametros' => $valores]);
         }
-        return response()->json(['data' => $productos, 'count' => $total, 'parametros' => $valores]);
+        return response()->json(['data' => $productos, 'count' => 0, 'parametros' => $valores]);
     }
 
     public function getProductoById($productoId)
@@ -98,6 +99,22 @@ class ProductoController extends Controller
         }
 
         $producto->delete();
+
+        return response()->json(['estatus' => true]);
+    }
+
+    public function deleteProductos(Request $request)
+    {
+        $valores = $request->input();
+        $ids = [];
+        foreach ($valores as $producto) {
+            $ids[] = $producto['id'];
+        }
+        $producto = Producto::whereIn('id', $ids)->delete();
+
+        if (!$producto) {
+            return response()->json(['estatus' => false]);
+        }
 
         return response()->json(['estatus' => true]);
     }
